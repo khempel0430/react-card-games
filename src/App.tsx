@@ -1,4 +1,4 @@
-import Landing from './landing/Landing';
+import Landing from './landing/Landing.tsx';
 
 function App() {
   return <Landing />;

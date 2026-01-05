@@ -1,3 +1,18 @@
+# KHempel's React Card Games
+
+## About
+
+This is a React demo application that showcases card game functionality built with TypeScript and React. The app is designed to support multiple classic card games and will eventually enable playing Solitaire, Cruel, and other card games.
+
+**Current Status:** The application currently displays a sticky toolbar at the top with the app title and a blank content area. Future updates will include card image rendering and full game logic implementation.
+
+**Technology Stack:**
+- React 19+ with TypeScript
+- PrimeReact UI Components
+- React Scripts for build and development
+
+---
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
