@@ -3,10 +3,17 @@
   top: 0;
   z-index: 1000;
   width: 100%;
-  justify-content: flex-start;
   min-height: 3rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .p-toolbar-group-start {
   margin-left: 2rem;
+}
+
+.p-toolbar-group-end {
+  margin-right: 2rem;
+  display: flex;
 }

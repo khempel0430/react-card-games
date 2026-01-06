@@ -1,0 +1,54 @@
+.card-deck {
+  padding: 2rem;
+}
+
+.card-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 3rem;
+  margin-top: 1rem;
+}
+
+.card-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.card-item img {
+  max-width: 100%;
+  width: 7rem;
+  height: 10rem;
+  object-fit: cover;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.card-item img:hover {
+  transform: scale(1.05);
+}
+
+.card-item p {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: #666;
+  word-break: break-word;
+}
+
+.card-attribution {
+  margin-top: 2rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: #666;
+}
+
+.card-attribution a {
+  color: #0066cc;
+  text-decoration: none;
+}
+
+.card-attribution a:hover {
+  text-decoration: underline;
+}
