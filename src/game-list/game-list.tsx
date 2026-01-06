@@ -7,6 +7,7 @@ const GameList: React.FC = () => {
       <h2>Available Games</h2>
       <p>Games coming soon...</p>
       <nav>
+        <p><Link to="/cruel">Cruel</Link></p>
         <p><Link to="/solitaire">Solitaire</Link></p>
         <p><Link to="/deck">View Card Deck</Link></p>
       </nav>

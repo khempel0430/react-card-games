@@ -6,6 +6,7 @@ import './Landing.css';
 import GameList from '../game-list/game-list.tsx';
 import CardDeck from '../card-deck/card-deck.tsx';
 import Solitaire from '../solitaire/solitaire.tsx';
+import Cruel from '../cruel/cruel.tsx';
 
 const LandingContent: React.FC = () => {
   const location = useLocation();
@@ -23,6 +24,7 @@ const LandingContent: React.FC = () => {
         <Routes>
           <Route path="/" element={<GameList />} />
           <Route path="/solitaire" element={<Solitaire />} />
+          <Route path="/cruel" element={<Cruel />} />
           <Route path="/deck" element={<CardDeck />} />
         </Routes>
       </div>

@@ -1,47 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import './card-deck.css';
-
-interface CardImage {
-  name: string;
-  src: string;
-}
+import cardDeckService, { card, CardImage, specialCard } from './cardDeckService.ts';
 
 const CardDeck: React.FC = () => {
-  const [cards, setCards] = useState<CardImage[]>([]);
+  const [cards, setCards] = useState<(card | specialCard)[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchCards = async () => {
+    const loadDeck = async () => {
       try {
-        console.log('Attempting to fetch CSV...');
-        const response = await fetch('/assets/playing-cards-pack/PNG/Cards (large)/_cards.csv');
-        console.log('Response status:', response.status);
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const text = await response.text();
-        console.log('CSV text length:', text.length);
-        const fileNames = text.trim().split('\n').filter(name => name.trim());
-        console.log('Loaded card names count:', fileNames.length);
-        console.log('First 5 cards:', fileNames.slice(0, 5));
-
-        const loadedCards: CardImage[] = fileNames.map((name) => ({
-          name: name.trim(),
-          src: `/assets/playing-cards-pack/PNG/Cards (large)/${name.trim()}.png`,
-        }));
-
-        console.log('Setting cards:', loadedCards.length);
-        setCards(loadedCards);
+        await cardDeckService.loadCards();
+        const specialCards = cardDeckService.getSpecialCards();
+        const regularCards = cardDeckService.getDeck();
+        setCards([...specialCards, ...regularCards]);
       } catch (error) {
-        console.error('Error loading cards:', error);
+        console.error('Error loading deck:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchCards();
+    loadDeck();
   }, []);
 
   if (loading) {
@@ -52,12 +31,36 @@ const CardDeck: React.FC = () => {
     <div className="card-deck">
       <h2>Card Deck</h2>
       <div className="card-gallery">
-        {cards.map((card) => (
-          <div key={card.name} className="card-item">
-            <img src={card.src} alt={card.name} />
-            <p>{card.name}</p>
-          </div>
-        ))}
+        {cards.map((cardOrSpecial) => {
+          let cardImage: CardImage | null = null;
+          let key: string;
+          let altText: string;
+          
+          const isSpecial = 'suite' in cardOrSpecial === false && 'value' in cardOrSpecial === false;
+          
+          if (isSpecial) {
+            const special = cardOrSpecial as specialCard;
+            key = special.name;
+            altText = special.name;
+            if (special.name === 'Card back') {
+              cardImage = cardDeckService.getBackCardImage();
+            } else if (special.name === 'Empty card') {
+              cardImage = cardDeckService.getEmptyCardImage();
+            }
+          } else {
+            const regular = cardOrSpecial as card;
+            key = `${regular.suite}-${regular.value}`;
+            altText = regular.name;
+            cardImage = cardDeckService.getCardBySuiteAndValue(regular.suite, regular.value);
+          }
+          
+          return (
+            <div key={key} className="card-item">
+              {cardImage && <img src={cardImage.src} alt={altText} />}
+              <p>{isSpecial ? (cardOrSpecial as specialCard).name : (cardOrSpecial as card).name}</p>
+            </div>
+          );
+        })}
       </div>
       <div className="card-attribution">
         <p>Card images by <a href="https://kenney.nl/" target="_blank" rel="noopener noreferrer">Kenney</a></p>
