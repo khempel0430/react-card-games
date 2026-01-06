@@ -80,7 +80,7 @@ class CruelGameService {
       objective: 'Move all cards to the Foundation piles, building up each suit from Ace to King.',
       play: 'You can move the top card of any tableau pile to another tableau pile if it is one rank lower and of the same suit. Empty tableau piles can be filled with any card. You can also move cards to the Foundation piles in ascending order by suit.',
       rulesLink: 'http://www.solitairecentral.com/rules/Cruel.html',
-      rulesLinkName: 'Bicycle Cards - Cruel Solitaire Rules'
+      rulesLinkName: 'Solitaire Central - Cruel Solitaire Rules'
     };
   }
 }
