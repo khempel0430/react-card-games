@@ -1,19 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from 'primereact/button';
-import cardDeckService, { card, CardValue } from '../card-deck/cardDeckService.ts';
+import cardDeckService, { card, CardSuite, CardValue } from '../card-deck/cardDeckService.ts';
 import cruelGameService from './cruelGameService.ts';
 import './cruel.css';
 import '../card-deck/card-deck.css';
 import RulesDialog, { IRulesDialogProps } from '../rules-dialog/rules-dialog.tsx';
 
 const Cruel: React.FC = () => {
-  const [heartPile, setHeartPile] = useState<card[]>([]);
-  const [diamondPile, setDiamondPile] = useState<card[]>([]);
-  const [clubPile, setClubPile] = useState<card[]>([]);
-  const [spadePile, setSpadePile] = useState<card[]>([]);
+  const [foundationPiles, setFoundationPiles] = useState<{ [key in CardSuite]: card[]; }>({
+    hearts: [],
+    diamonds: [],
+    clubs: [],
+    spades: [],
+  });
   const [tableauPiles, setTableauPiles] = useState<card[][]>([]);
   const [selectedPile, setSelectedPile] = useState<string | null>(null);
   const [rules, setRules] = useState<IRulesDialogProps | null>(null);
+  const cardValues = Object.values(CardValue);
+  const suites = Object.values(CardSuite);
 
   useEffect(() => {
     const initializeDeck = async () => {
@@ -22,10 +26,7 @@ const Cruel: React.FC = () => {
         
         // Initialize the game
         const newGameState = cruelGameService.initializeGame();
-        setHeartPile(newGameState.foundations.hearts);
-        setDiamondPile(newGameState.foundations.diamonds);
-        setClubPile(newGameState.foundations.clubs);
-        setSpadePile(newGameState.foundations.spades);
+        setFoundationPiles(newGameState.foundations);
         setTableauPiles(newGameState.tableau);
       } catch (error) {
         console.error('Error loading deck:', error);
@@ -38,18 +39,19 @@ const Cruel: React.FC = () => {
 
   const handleNewGame = () => {
     const newGameState = cruelGameService.initializeGame();
-    setHeartPile(newGameState.foundations.hearts);
-    setDiamondPile(newGameState.foundations.diamonds);
-    setClubPile(newGameState.foundations.clubs);
-    setSpadePile(newGameState.foundations.spades);
+    setFoundationPiles(newGameState.foundations);
     setTableauPiles(newGameState.tableau);
   };
 
   const handlePileClick = (pileType: string) => {
     if (!selectedPile) {
-      // Only allow selecting tableau piles
-      if (pileType.startsWith('tableau-')) {
-        setSelectedPile(pileType);
+      const selectedPileIdx = pileType.startsWith('tableau-') ? parseInt(pileType.split('-')[1]) : null;
+
+      // Only allow selecting tableau piles if they have cards
+      if (selectedPileIdx !== null) {
+        if (tableauPiles[selectedPileIdx] && tableauPiles[selectedPileIdx].length > 0) {
+          setSelectedPile(pileType);
+        }
       }
       return;
     }
@@ -63,16 +65,20 @@ const Cruel: React.FC = () => {
     // Only allow moves from tableau piles (not from foundation piles)
     if (selectedPile.startsWith('tableau-')) {
       const sourcePileIdx = parseInt(selectedPile.split('-')[1]);
+
       if (tableauPiles[sourcePileIdx] && tableauPiles[sourcePileIdx].length > 0) {
         const sourceCard = tableauPiles[sourcePileIdx][tableauPiles[sourcePileIdx].length - 1];
         const destinationCard = (() => {
-          if (pileType === 'heart') return heartPile[heartPile.length - 1];
-          if (pileType === 'diamond') return diamondPile[diamondPile.length - 1];
-          if (pileType === 'club') return clubPile[clubPile.length - 1];
-          if (pileType === 'spade') return spadePile[spadePile.length - 1];
-          if (pileType.startsWith('tableau-')) {
-            const destPileIdx = parseInt(pileType.split('-')[1]);
-            return tableauPiles[destPileIdx][tableauPiles[destPileIdx].length - 1];
+          switch (pileType) {
+            case CardSuite.HEARTS: return getTopFoundationCard(CardSuite.HEARTS);
+            case CardSuite.DIAMONDS: return getTopFoundationCard(CardSuite.DIAMONDS);
+            case CardSuite.CLUBS: return getTopFoundationCard(CardSuite.CLUBS);
+            case CardSuite.SPADES: return getTopFoundationCard(CardSuite.SPADES);
+            default:
+              if (pileType.startsWith('tableau-')) {
+                const destPileIdx = parseInt(pileType.split('-')[1]);
+                return tableauPiles[destPileIdx][tableauPiles[destPileIdx].length - 1];
+              }
           }
         })();
 
@@ -82,13 +88,13 @@ const Cruel: React.FC = () => {
          }
 
         // If moving to foundation, check if card is next in sequence
-        if (['heart', 'diamond', 'club', 'spade'].includes(pileType)) {
-          const destPile = pileType === 'heart' ? heartPile :
-            pileType === 'diamond' ? diamondPile :
-              pileType === 'club' ? clubPile : spadePile;
+        if (suites.includes(pileType as CardSuite)) {
+          const destPile = pileType === CardSuite.HEARTS ? foundationPiles.hearts :
+            pileType === CardSuite.DIAMONDS ? foundationPiles.diamonds :
+              pileType === CardSuite.CLUBS ? foundationPiles.clubs : foundationPiles.spades;
           
           const expectedValue = destPile.length === 0 ? 'ACE' : 
-            (Object.values(CardValue)[Object.values(CardValue).indexOf(destPile[destPile.length - 1].value) + 1]);
+            (cardValues[cardValues.indexOf(destPile[destPile.length - 1].value) + 1]);
           
           if (sourceCard.value !== expectedValue) {
             return;
@@ -101,7 +107,7 @@ const Cruel: React.FC = () => {
           const destPile = tableauPiles[destPileIdx];
           const destTopCard = destPile[destPile.length - 1];
           const expectedValue = destTopCard ?
-            Object.values(CardValue)[Object.values(CardValue).indexOf(destTopCard.value) - 1] : null;
+            cardValues[cardValues.indexOf(destTopCard.value) - 1] : null;
           
           if (expectedValue && sourceCard.value !== expectedValue) {
             return;
@@ -117,23 +123,29 @@ const Cruel: React.FC = () => {
         });
         setTableauPiles(removeCardFromTableau);
         
-        if (pileType === 'heart') {
-          setHeartPile([...heartPile, sourceCard]);
-        } else if (pileType === 'diamond') {
-          setDiamondPile([...diamondPile, sourceCard]);
-        } else if (pileType === 'club') {
-          setClubPile([...clubPile, sourceCard]);
-        } else if (pileType === 'spade') {
-          setSpadePile([...spadePile, sourceCard]);
-        } else if (pileType.startsWith('tableau-')) {
-          const destPileIdx = parseInt(pileType.split('-')[1]);
-          const newTableau = removeCardFromTableau.map((p, idx) => {
-            if (idx === destPileIdx) {
-              return [...p, sourceCard];
-            }
-            return p;
-          });
-          setTableauPiles(newTableau);
+        switch (pileType) {
+          case CardSuite.HEARTS:
+            setFoundationPiles({...foundationPiles, hearts: [...foundationPiles.hearts, sourceCard]});
+            break;
+          case CardSuite.DIAMONDS:
+            setFoundationPiles({...foundationPiles, diamonds: [...foundationPiles.diamonds, sourceCard]});
+            break;
+          case CardSuite.CLUBS:
+            setFoundationPiles({...foundationPiles, clubs: [...foundationPiles.clubs, sourceCard]});
+            break;
+          case CardSuite.SPADES:
+            setFoundationPiles({...foundationPiles, spades: [...foundationPiles.spades, sourceCard]});
+            break;
+          default:
+            const destPileIdx = parseInt(pileType.split('-')[1]);
+            const newTableau = removeCardFromTableau.map((p, idx) => {
+              if (idx === destPileIdx) {
+                return [...p, sourceCard];
+              }
+              return p;
+            });
+            setTableauPiles(newTableau);
+            break;
         }
       }
     }
@@ -167,12 +179,17 @@ const Cruel: React.FC = () => {
     return null;
   }
 
-  const getFoundationClasses = (pileType: string) => {
+  const getFoundationClasses = (pileType: CardSuite) => {
     return `foundation-pile ${selectedPile === pileType ? 'selected' : ''}`;
   }
 
   const getTableauClasses = (pileIdx: number) => {
     return `tableau-pile ${selectedPile === `tableau-${pileIdx}` ? 'selected' : ''}`;
+  }
+
+  const getTopFoundationCard = (suite: CardSuite) => {
+    const pile = foundationPiles[suite];
+    return pile[pile.length - 1];
   }
 
   return (
@@ -188,36 +205,36 @@ const Cruel: React.FC = () => {
         <div>
           <h3>Foundations</h3>
           <div className="foundations">
-            <div className={getFoundationClasses('heart')} onClick={() => handlePileClick('heart')}>
+            <div className={getFoundationClasses(CardSuite.HEARTS)} onClick={() => handlePileClick(CardSuite.HEARTS)}>
               <strong>Hearts: </strong>
               <span className="card-item">
-                {getImage(heartPile[heartPile.length - 1])}
+                {getImage(getTopFoundationCard(CardSuite.HEARTS))}
               </span>
-              <span>{heartPile[heartPile.length - 1]?.name}</span>
+              <span>{getTopFoundationCard(CardSuite.HEARTS)?.name}</span>
             </div>
 
-            <div className={getFoundationClasses('diamond')} onClick={() => handlePileClick('diamond')}>
+            <div className={getFoundationClasses(CardSuite.DIAMONDS)} onClick={() => handlePileClick(CardSuite.DIAMONDS)}>
               <strong>Diamonds: </strong>
               <span className="card-item">
-                {getImage(diamondPile[diamondPile.length - 1])}
+                {getImage(getTopFoundationCard(CardSuite.DIAMONDS))}
               </span>
-              <span>{diamondPile[diamondPile.length - 1]?.name}</span>
+              <span>{getTopFoundationCard(CardSuite.DIAMONDS)?.name}</span>
             </div>
 
-            <div className={getFoundationClasses('club')} onClick={() => handlePileClick('club')}>
+            <div className={getFoundationClasses(CardSuite.CLUBS)} onClick={() => handlePileClick(CardSuite.CLUBS)}>
               <strong>Clubs: </strong>
               <span className="card-item">
-                {getImage(clubPile[clubPile.length - 1])}
+                {getImage(getTopFoundationCard(CardSuite.CLUBS))}
               </span>
-              <span>{clubPile[clubPile.length - 1]?.name}</span>
+              <span>{getTopFoundationCard(CardSuite.CLUBS)?.name}</span>
             </div>
 
-            <div className={getFoundationClasses('spade')} onClick={() => handlePileClick('spade')}>
+            <div className={getFoundationClasses(CardSuite.SPADES)} onClick={() => handlePileClick(CardSuite.SPADES)}>
               <strong>Spades: </strong>
               <span className="card-item">
-                {getImage(spadePile[spadePile.length - 1])}
+                {getImage(getTopFoundationCard(CardSuite.SPADES))}
               </span>
-              <span>{spadePile[spadePile.length - 1]?.name}</span>
+              <span>{getTopFoundationCard(CardSuite.SPADES)?.name}</span>
             </div>
           </div>
         </div>
@@ -228,9 +245,7 @@ const Cruel: React.FC = () => {
             {tableauPiles.map((pile, pileIdx) => (
               <div key={pileIdx} className={getTableauClasses(pileIdx)} onClick={() => handlePileClick(`tableau-${pileIdx}`)}>
                 <strong>Pile {pileIdx + 1}: </strong>
-                <span className="card-item">
-                  {getImage(pile[pile.length - 1])}
-                </span>
+                <span className="card-item">{getImage(pile[pile.length - 1])}</span>
                 <span>{pile.length > 0 ? pile[pile.length - 1]?.name : ''}</span>
               </div>
             ))}
