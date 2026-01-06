@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from 'primereact/button';
-import { Dialog } from 'primereact/dialog';
 import cardDeckService, { card, CardValue } from '../card-deck/cardDeckService.ts';
 import cruelGameService from './cruelGameService.ts';
 import './cruel.css';
 import '../card-deck/card-deck.css';
+import RulesDialog, { IRulesDialogProps } from '../rules-dialog/rules-dialog.tsx';
 
 const Cruel: React.FC = () => {
-  const [showRulesDialog, setShowRulesDialog] = useState(false);
   const [heartPile, setHeartPile] = useState<card[]>([]);
   const [diamondPile, setDiamondPile] = useState<card[]>([]);
   const [clubPile, setClubPile] = useState<card[]>([]);
   const [spadePile, setSpadePile] = useState<card[]>([]);
   const [tableauPiles, setTableauPiles] = useState<card[][]>([]);
   const [selectedPile, setSelectedPile] = useState<string | null>(null);
+  const [rules, setRules] = useState<IRulesDialogProps | null>(null);
 
   useEffect(() => {
     const initializeDeck = async () => {
@@ -33,6 +33,7 @@ const Cruel: React.FC = () => {
     };
 
     initializeDeck();
+    setRules(cruelGameService.getCruelRules());
   }, []);
 
   const handleNewGame = () => {
@@ -42,10 +43,6 @@ const Cruel: React.FC = () => {
     setClubPile(newGameState.foundations.clubs);
     setSpadePile(newGameState.foundations.spades);
     setTableauPiles(newGameState.tableau);
-  };
-
-  const handleRules = () => {
-    setShowRulesDialog(true);
   };
 
   const handlePileClick = (pileType: string) => {
@@ -183,7 +180,7 @@ const Cruel: React.FC = () => {
       <h2>Cruel</h2>
       <div className="game-controls">
         <Button label="New Game" onClick={handleNewGame} />
-        <Button label="Rules" onClick={handleRules} />
+        <RulesDialog {...(rules as IRulesDialogProps)} />
         <Button label="Redeal" onClick={handleRedeal} />
       </div>
 
@@ -240,26 +237,6 @@ const Cruel: React.FC = () => {
           </div>
         </div>
       </div>
-
-      <Dialog 
-        header="Rules" 
-        visible={showRulesDialog} 
-        onHide={() => setShowRulesDialog(false)}
-        modal
-      >
-        <div className="rules-content">
-          <h3>Initial Layout</h3>
-          <p>Put all the Aces into Foundation piles. The rest of the cards form the 12 tableau piles which are four cards each.</p>
-          
-          <h3>Objective</h3>
-          <p>The objective of the game is to move all of the cards from the tableau to the foundation piles. If you become blocked - unable to move cards even with redealing - then you lose the game.  If you move all cards to the foundations, you win.</p>
-          
-          <h3>Play</h3>
-          <p>Only the top card in each tableau pile can be moved. The cards in the tableau piles are built down by sequence and suit (e.g. a 5♠ may be played on a 6♠). Each of the foundations is built up in suit in sequence from ace to king . Only one card can be moved at a time. If no moves remain, then you may redeal the tableau piles.  You may redeal as many times as you like until you win or become blocked.</p>
-          
-          <p><small>Complete rules from: <a href="http://www.solitairecentral.com/rules/Cruel.html" target="_blank" rel="noopener noreferrer">Solitaire Central</a></small></p>
-        </div>
-      </Dialog>
     </div>
   );
 };

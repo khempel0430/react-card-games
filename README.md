@@ -14,6 +14,17 @@ Fully Playable Games:
 
 The main page also has a link to view the card deck, which displays all the cards used in the app and attributes the image source to https://kenney.nl/ which has open source game assets.
 
+**Planned Games Not Listed Above**
+- Freecell
+- Pyramid
+- Spider
+- Tri-Peaks
+- Black Hole
+- More TBA later
+
+**UI Improvements**
+- Accessibility Improvements for Keyboard support and screen readers
+
 **Technology Stack:**
 - React 19+ with TypeScript
 - PrimeReact UI Components

@@ -1,4 +1,5 @@
 import cardDeckService, { card, CardSuite, CardValue } from '../card-deck/cardDeckService.ts';
+import { IRulesDialogProps } from '../rules-dialog/rules-dialog.tsx';
 
 export interface GameState {
   foundations: {
@@ -69,6 +70,17 @@ class CruelGameService {
     return {
       foundations,
       tableau,
+    };
+  }
+
+  public getCruelRules(): IRulesDialogProps {
+    return {
+      decks: 1,
+      initialLayout: 'Put all the Aces into Foundation piles. The rest of the cards form the 12 tableau piles which are four cards each.',
+      objective: 'Move all cards to the Foundation piles, building up each suit from Ace to King.',
+      play: 'You can move the top card of any tableau pile to another tableau pile if it is one rank lower and of the same suit. Empty tableau piles can be filled with any card. You can also move cards to the Foundation piles in ascending order by suit.',
+      rulesLink: 'https://www.bicyclecards.com/how-to-play/cruel-solitaire/',
+      rulesLinkName: 'Bicycle Cards - Cruel Solitaire Rules'
     };
   }
 }
