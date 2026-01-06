@@ -79,7 +79,7 @@ class CruelGameService {
       initialLayout: 'Put all the Aces into Foundation piles. The rest of the cards form the 12 tableau piles which are four cards each.',
       objective: 'Move all cards to the Foundation piles, building up each suit from Ace to King.',
       play: 'You can move the top card of any tableau pile to another tableau pile if it is one rank lower and of the same suit. Empty tableau piles can be filled with any card. You can also move cards to the Foundation piles in ascending order by suit.',
-      rulesLink: 'https://www.bicyclecards.com/how-to-play/cruel-solitaire/',
+      rulesLink: 'http://www.solitairecentral.com/rules/Cruel.html',
       rulesLinkName: 'Bicycle Cards - Cruel Solitaire Rules'
     };
   }
