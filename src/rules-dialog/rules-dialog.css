@@ -1,0 +1,8 @@
+.p-dialog {
+  border: .25rem solid black;
+  border-radius: 5px;
+  padding: 1rem;
+  background-color: beige;
+  max-width: 500px;
+  max-height: 500px;
+}

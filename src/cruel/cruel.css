@@ -1,7 +1,3 @@
-.cruel {
-  padding: 2rem;
-}
-
 .game-controls {
   display: flex;
   gap: 1rem;
@@ -10,15 +6,6 @@
 
 .game-controls button {
   padding: 0.5rem 1rem;
-}
-
-.p-dialog {
-  border: .25rem solid black;
-  border-radius: 5px;
-  padding: 1rem;
-  background-color: beige;
-  max-width: 500px;
-  max-height: 500px;
 }
 
 .game-display {
@@ -44,17 +31,16 @@
 }
 
 .foundation-pile, .tableau-pile {
-  min-width: 100px;
-  min-height: 140px;
+  width: 110px;
+  height: 250px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: #f0f0f0;
   border-radius: 5px;
   cursor: pointer;
   padding: 8px;
-  border: 1px solid gray;
+  border: 3px solid gray;
   &.selected {
     border: 2px solid blue;
   }

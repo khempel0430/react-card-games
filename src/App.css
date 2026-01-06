@@ -21,8 +21,20 @@
   color: white;
 }
 
+a,
 .App-link {
   color: #61dafb;
+}
+
+body {
+  background-color: green;
+}
+
+.App-content {
+  color: white;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  padding-bottom: 2rem;
 }
 
 @keyframes App-logo-spin {
