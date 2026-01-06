@@ -2,11 +2,15 @@
 
 ## About
 
-This is a React demo application that showcases card game functionality built with TypeScript and React. The app is designed to support multiple classic card games and will eventually enable playing Solitaire, Cruel, and other card games.
+This is a React demo application that showcases card game functionality built with TypeScript and React. The app is designed to support multiple classic card games and will eventually enable playing Klondike, Cruel, and other card games.
 
-**Current Status:** The application currently displays a sticky toolbar at the top with the app title and a content area noting that games are coming soon.  There's a link to a solitaire page which notes it's coming soon.  
+**Current Status:** The application currently displays a sticky toolbar at the top with the app title and listing playable (or soon to be added) games.
 
-There is a link to a fully functional game of Cruel.  The UX is unpolished, but the game is playable, as it fully follows the rules of Cruel Solitaire.  (Rules directly from/attributed to  http://www.solitairecentral.com/rules/Cruel.html)
+To Be Added Games:
+- Klondike Solitaire: Rules found http://www.solitairecentral.com/rules/Klondike.html
+
+Fully Playable Games:
+- Cruel Solitaire: Rules found http://www.solitairecentral.com/rules/Cruel.html
 
 The main page also has a link to view the card deck, which displays all the cards used in the app and attributes the image source to https://kenney.nl/ which has open source game assets.
 

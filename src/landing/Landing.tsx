@@ -5,7 +5,7 @@ import '../App.css';
 import './Landing.css';
 import GameList from '../game-list/game-list.tsx';
 import CardDeck from '../card-deck/card-deck.tsx';
-import Solitaire from '../solitaire/solitaire.tsx';
+import Klondike from '../klondike/klondike.tsx';
 import Cruel from '../cruel/cruel.tsx';
 
 const LandingContent: React.FC = () => {
@@ -23,7 +23,7 @@ const LandingContent: React.FC = () => {
       <div className="App-content">
         <Routes>
           <Route path="/" element={<GameList />} />
-          <Route path="/solitaire" element={<Solitaire />} />
+          <Route path="/klondike" element={<Klondike />} />
           <Route path="/cruel" element={<Cruel />} />
           <Route path="/deck" element={<CardDeck />} />
         </Routes>
