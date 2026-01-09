@@ -1,0 +1,34 @@
+.klondike-game-area {
+  display: flex;
+  flex-direction: column;
+}
+
+.klondike-upper-area {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  flex-direction: row-reverse;
+  width:100%;;
+}
+
+.klondike-stock,
+.klondike-foundations {
+  display: flex;
+  flex-direction: row;
+}
+
+.klondike-tableau {
+  display: flex;
+  flex-direction: row;
+  margin-left: auto;
+  gap: 0.5rem;
+}
+
+.klondike-tableau-pile {
+  display: flex;
+  flex-direction: column;
+}
+
+.klondike-tableau-pile .card-item {
+  position: relative;
+}

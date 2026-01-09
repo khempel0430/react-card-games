@@ -1,6 +1,7 @@
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import React, { useState } from 'react';
+import './rules-dialog.css';
 
 export interface IRulesDialogProps {
   decks?: number;

@@ -7,6 +7,7 @@ export interface card {
     suite: CardSuite;
     value: CardValue;
     name: string;
+    isFaceUp?: boolean;
 }
 
 export interface specialCard {

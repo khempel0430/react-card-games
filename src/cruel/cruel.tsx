@@ -41,6 +41,7 @@ const Cruel: React.FC = () => {
     const newGameState = cruelGameService.initializeGame();
     setFoundationPiles(newGameState.foundations);
     setTableauPiles(newGameState.tableau);
+    setSelectedPile(null);
   };
 
   const handlePileClick = (pileType: string) => {
